@@ -10,15 +10,15 @@ import (
 // TestTransitiveImports checks that TransitiveImports is able to report all
 // recursive imports of a file
 func TestTransitiveImports(t *testing.T) {
-	imports, err := TransitiveImports("testdata/main.jsonnet")
+	imports, err := TransitiveImports("testdata/environments/test/main.jsonnet")
 	require.NoError(t, err)
 	assert.ElementsMatch(t, []string{
-		"testdata/trees.jsonnet",
+		"testdata/environments/test/trees.jsonnet",
 
-		"testdata/trees/apple.jsonnet",
-		"testdata/trees/cherry.jsonnet",
-		"testdata/trees/peach.jsonnet",
+		"testdata/environments/test/trees/apple.jsonnet",
+		"testdata/environments/test/trees/cherry.jsonnet",
+		"testdata/environments/test/trees/peach.jsonnet",
 
-		"testdata/trees/generic.libsonnet",
+		"testdata/environments/test/trees/generic.libsonnet",
 	}, imports)
 }

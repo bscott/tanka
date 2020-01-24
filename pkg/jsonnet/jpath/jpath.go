@@ -71,6 +71,10 @@ func FindParentFile(file, start, stop string) (string, error) {
 		return start, nil
 	} else if start == stop {
 		return "", ErrorFileNotFound{file}
+	} else if start == "." {
+		// filepath.Dir returns "." if the path is empty,
+		// in this case return ErrorFileNotFound to avoid infinite recursion
+		return "", ErrorFileNotFound{file}
 	}
 	return FindParentFile(file, filepath.Dir(start), stop)
 }
