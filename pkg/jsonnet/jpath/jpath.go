@@ -32,7 +32,9 @@ func (e ErrorFileNotFound) Error() string {
 // This results in predictable imports, as it doesn't matter whether the user called
 // called the command further down tree or not. A little bit like git.
 func Resolve(workdir string) (path []string, base, root string, err error) {
-	root, err = FindParentFile("jsonnetfile.json", workdir, "/")
+	// Look at least one directory up as there may be a jsonnetfile.json
+	// in the environment directory if there are local vendor overrides
+	root, err = FindParentFile("jsonnetfile.json", filepath.Dir(workdir), "/")
 	if err != nil {
 		if _, ok := err.(ErrorFileNotFound); ok {
 			return nil, "", "", ErrorNoRoot
@@ -48,9 +50,11 @@ func Resolve(workdir string) (path []string, base, root string, err error) {
 		return nil, "", "", err
 	}
 
+	// The importer iterates through this list in reverse order
 	return []string{
 		base,
 		filepath.Join(root, "vendor"),
+		filepath.Join(base, "vendor"), // Look for a vendor folder in the base dir before using the root vendor
 		filepath.Join(root, "lib"),
 	}, base, root, nil
 }
